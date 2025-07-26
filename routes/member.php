@@ -5,6 +5,7 @@ use App\Http\Controllers\Member\DashboardController;
 use App\Http\Controllers\Member\ProfileController;
 use App\Http\Controllers\Member\RegistrationController;
 use App\Http\Controllers\Member\PaymentController;
+use App\Http\Controllers\Member\AnnouncementController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,27 +39,12 @@ Route::prefix('training-sessions')->name('training-sessions.')->group(function (
 // Member Session Registrations
 Route::prefix('registrations')->name('registrations.')->group(function () {
     Route::get('/', [RegistrationController::class, 'index'])->name('index');
-
-    Route::post('/training-sessions/{sessionId}', function ($sessionId) {
-        // TODO: Implement member registration to training session
-    })->name('store');
-
-    Route::delete('/{id}', function ($id) {
-        // TODO: Implement member registration cancellation
-    })->name('destroy');
 });
 
 // Member Announcements
 Route::prefix('announcements')->name('announcements.')->group(function () {
-    Route::get('/', function () {
-        // TODO: Implement member announcements view
-        return view('member.announcements.index');
-    })->name('index');
-
-    Route::get('/{id}', function ($id) {
-        // TODO: Implement announcement detail
-        return view('member.announcements.show', compact('id'));
-    })->name('show');
+    Route::get('/', [AnnouncementController::class, 'index'])->name('index');
+    Route::get('/{id}', [AnnouncementController::class, 'show'])->name('show');
 });
 
 // Member Payment Routes
