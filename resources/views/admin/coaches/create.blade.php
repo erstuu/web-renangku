@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tambah Coach - Admin Web Renangku</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="{{ asset('js/notifications.js') }}"></script>
+    <script src="{{ asset('js/admin-modals.js') }}"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100">
+    <!-- Navigation -->
+    <nav class="bg-red-600 text-white p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold">Web Renangku - Admin Dashboard</h1>
+            <div class="flex items-center space-x-4">
+                <span class="text-red-200">{{ Auth::user()->full_name }}</span>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded text-white">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                    </button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar and Content -->
+    <div class="flex">
+        <!-- Sidebar -->
+        <div class="w-64 bg-white shadow-md min-h-screen">
+            <div class="p-4">
+                <nav class="space-y-2">
+                    <a href="{{ route('admin.dashboard') }}" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md">
+                        <i class="fas fa-tachometer-alt mr-3"></i>Dashboard
+                    </a>
+                    <a href="{{ route('admin.coaches.index') }}" class="flex items-center px-4 py-2 text-gray-700 bg-red-100 rounded-md">
+                        <i class="fas fa-users mr-3"></i>Manajemen Coach
+                    </a>
+                    <a href="{{ route('admin.members.index') }}" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md">
+                        <i class="fas fa-user-friends mr-3"></i>Manajemen Member
+                    </a>
+                    <a href="{{ route('admin.training-sessions.index') }}" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md">
+                        <i class="fas fa-swimming-pool mr-3"></i>Sesi Latihan
+                    </a>
+                    <a href="{{ route('admin.announcements.index') }}" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md">
+                        <i class="fas fa-bullhorn mr-3"></i>Pengumuman
+                    </a>
+                    <a href="{{ route('admin.data-change-requests.index') }}" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md">
+                        <i class="fas fa-edit mr-3"></i>Permintaan Perubahan Data
+                    </a>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 p-6">
+            @if (session('success'))
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4 notification-message">
+                {{ session('success') }}
+            </div>
+            @endif
+
+            @if (session('error'))
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 notification-message">
+                {{ session('error') }}
+            </div>
+            @endif
+            <!-- Header -->
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900">Tambah Coach</h2>
+                    <p class="text-gray-600">Buat akun coach baru dengan profil lengkap</p>
+                </div>
+                <a href="{{ route('admin.coaches.index') }}"
+                    class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200">
+                    Kembali
+                </a>
+            </div>
+
+            <!-- Form -->
+            <div class="bg-white rounded-lg shadow border border-gray-200">
+                <form action="{{ route('admin.coaches.store') }}" method="POST" class="p-6 space-y-6">
+                    @csrf
+
+                    <!-- Account Information -->
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">
+                            Informasi Akun
+                        </h3>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Full Name -->
+                            <div>
+                                <label for="full_name" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Nama Lengkap <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text"
+                                    id="full_name"
+                                    name="full_name"
+                                    value="{{ old('full_name') }}"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors @error('full_name') border-red-500 @enderror"
+                                    required>
+                                @error('full_name')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- Username -->
+                            <div>
+                                <label for="username" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Username <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text"
+                                    id="username"
+                                    name="username"
+                                    value="{{ old('username') }}"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors @error('username') border-red-500 @enderror"
+                                    required>
+                                @error('username')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- Email -->
+                            <div>
+                                <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Email <span class="text-red-500">*</span>
+                                </label>
+                                <input type="email"
+                                    id="email"
+                                    name="email"
+                                    value="{{ old('email') }}"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors @error('email') border-red-500 @enderror"
+                                    required>
+                                @error('email')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- Password -->
+                            <div>
+                                <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Password <span class="text-red-500">*</span>
+                                </label>
+                                <input type="password"
+                                    id="password"
+                                    name="password"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors @error('password') border-red-500 @enderror"
+                                    required>
+                                @error('password')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- Confirm Password -->
+                            <div>
+                                <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Konfirmasi Password <span class="text-red-500">*</span>
+                                </label>
+                                <input type="password"
+                                    id="password_confirmation"
+                                    name="password_confirmation"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
+                                    required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Coach Profile Information -->
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-2">
+                            Informasi Profil Coach
+                        </h3>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Specialization -->
+                            <div>
+                                <label for="specialization" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Spesialisasi
+                                </label>
+                                <input type="text"
+                                    id="specialization"
+                                    name="specialization"
+                                    value="{{ old('specialization') }}"
+                                    placeholder="Contoh: Teknik Bebas, Gaya Kupu-kupu"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors @error('specialization') border-red-500 @enderror">
+                                @error('specialization')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- Contact Info -->
+                            <div>
+                                <label for="contact_info" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Informasi Kontak <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text"
+                                    id="contact_info"
+                                    name="contact_info"
+                                    value="{{ old('contact_info') }}"
+                                    placeholder="WhatsApp: 08123456789, Email: coach@example.com"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors @error('contact_info') border-red-500 @enderror">
+                                <small class="text-gray-500 text-xs mt-1">Format: WhatsApp, Email, atau kontak lain yang bisa dihubungi member</small>
+                                @error('contact_info')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- Certification -->
+                            <div>
+                                <label for="certification" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Sertifikasi
+                                </label>
+                                <input type="text"
+                                    id="certification"
+                                    name="certification"
+                                    value="{{ old('certification') }}"
+                                    placeholder="Sertifikat pelatihan, lisensi, dll"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors @error('certification') border-red-500 @enderror">
+                                @error('certification')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- Experience Years -->
+                            <div>
+                                <label for="experience_years" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Pengalaman (Tahun)
+                                </label>
+                                <input type="number"
+                                    id="experience_years"
+                                    name="experience_years"
+                                    value="{{ old('experience_years') }}"
+                                    min="0"
+                                    max="50"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors @error('experience_years') border-red-500 @enderror">
+                                @error('experience_years')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- Hourly Rate -->
+                            <div>
+                                <label for="hourly_rate" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Tarif per Jam (Rp)
+                                </label>
+                                <input type="number"
+                                    id="hourly_rate"
+                                    name="hourly_rate"
+                                    value="{{ old('hourly_rate') }}"
+                                    min="0"
+                                    step="1000"
+                                    placeholder="100000"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors @error('hourly_rate') border-red-500 @enderror">
+                                @error('hourly_rate')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- Bio -->
+                            <div class="md:col-span-2">
+                                <label for="bio" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Bio/Deskripsi
+                                </label>
+                                <textarea id="bio"
+                                    name="bio"
+                                    rows="4"
+                                    placeholder="Ceritakan tentang pengalaman dan keahlian sebagai coach..."
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors @error('bio') border-red-500 @enderror">{{ old('bio') }}</textarea>
+                                @error('bio')
+                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+                        <a href="{{ route('admin.coaches.index') }}"
+                            class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200">
+                            Batal
+                        </a>
+                        <button type="submit"
+                            class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200">
+                            Simpan Coach
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
