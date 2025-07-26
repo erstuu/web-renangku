@@ -24,6 +24,7 @@ class User extends Authenticatable
         'password',
         'role',
         'is_active',
+        'approval_status',
     ];
 
     /**
@@ -144,5 +145,32 @@ class User extends Authenticatable
     public function announcements()
     {
         return $this->hasMany(Announcement::class, 'admin_id');
+    }
+
+    /**
+     * Check if user is a coach with pending approval
+     */
+    public function isPendingApproval()
+    {
+        return $this->role === 'coach' && $this->approval_status === 'pending';
+    }
+
+    /**
+     * Check if user is approved
+     */
+    public function isApproved()
+    {
+        return $this->approval_status === 'approved';
+    }
+
+    /**
+     * Check if user needs to complete profile
+     */
+    public function needsProfileCompletion()
+    {
+        if ($this->role === 'coach') {
+            return !$this->coachProfile || !$this->coachProfile->isComplete();
+        }
+        return false;
     }
 }

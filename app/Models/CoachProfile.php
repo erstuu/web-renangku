@@ -43,4 +43,32 @@ class CoachProfile extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * Check if profile is complete for approval
+     */
+    public function isComplete()
+    {
+        return !empty($this->specialization) &&
+            !empty($this->bio) &&
+            !empty($this->contact_info) &&
+            !empty($this->certification) &&
+            !is_null($this->experience_years);
+    }
+
+    /**
+     * Get required fields that are missing
+     */
+    public function getMissingFields()
+    {
+        $missing = [];
+
+        if (empty($this->specialization)) $missing[] = 'Spesialisasi';
+        if (empty($this->bio)) $missing[] = 'Bio/Deskripsi';
+        if (empty($this->contact_info)) $missing[] = 'Kontak';
+        if (empty($this->certification)) $missing[] = 'Sertifikat';
+        if (is_null($this->experience_years)) $missing[] = 'Pengalaman (tahun)';
+
+        return $missing;
+    }
 }
