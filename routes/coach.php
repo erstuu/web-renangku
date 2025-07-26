@@ -23,6 +23,7 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard
 
 // Coach Profile Management
 Route::prefix('profile')->name('profile.')->group(function () {
+    Route::get('/', [ProfileController::class, 'show'])->name('show');
     Route::get('/setup', [ProfileController::class, 'setup'])->name('setup');
     Route::post('/setup', [ProfileController::class, 'store'])->name('store');
     Route::get('/edit', [ProfileController::class, 'edit'])->name('edit');
@@ -53,3 +54,6 @@ Route::prefix('data-change-requests')->name('data-change-requests.')->group(func
     Route::post('/', [DataChangeRequestController::class, 'store'])->name('store');
     Route::get('/{dataChangeRequest}', [DataChangeRequestController::class, 'show'])->name('show');
 });
+
+// Alias route untuk request data change
+Route::post('/request-data-change', [DataChangeRequestController::class, 'store'])->name('request-data-change');

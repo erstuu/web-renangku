@@ -60,21 +60,35 @@ class DataChangeRequestController extends Controller
         }
 
         try {
+            // Determine request type based on filled fields
+            $hasName = !empty($request->requested_name);
+            $hasEmail = !empty($request->requested_email);
+
+            if (!$hasName && !$hasEmail) {
+                return back()->withErrors(['general' => 'Minimal salah satu field (nama atau email) harus diisi.']);
+            }
+
+            $requestType = 'both';
+            if ($hasName && !$hasEmail) {
+                $requestType = 'name';
+            } elseif (!$hasName && $hasEmail) {
+                $requestType = 'email';
+            }
+
             $validated = $request->validate([
-                'request_type' => 'required|in:name,email,both',
-                'requested_name' => 'required_if:request_type,name,both|nullable|string|max:255',
-                'requested_email' => 'required_if:request_type,email,both|nullable|email|max:255|unique:users,email,' . $user->id,
+                'requested_name' => 'nullable|string|max:255',
+                'requested_email' => 'nullable|email|max:255|unique:users,email,' . $user->id,
                 'reason' => 'required|string|min:10|max:1000',
             ], [
-                'request_type.required' => 'Pilih jenis perubahan data.',
-                'requested_name.required_if' => 'Nama baru harus diisi.',
-                'requested_email.required_if' => 'Email baru harus diisi.',
                 'requested_email.email' => 'Format email tidak valid.',
                 'requested_email.unique' => 'Email sudah digunakan oleh pengguna lain.',
                 'reason.required' => 'Alasan perubahan harus diisi.',
                 'reason.min' => 'Alasan minimal 10 karakter.',
                 'reason.max' => 'Alasan maksimal 1000 karakter.',
             ]);
+
+            // Add request_type to validated data
+            $validated['request_type'] = $requestType;
 
             Log::info('Validation passed', $validated);
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -92,13 +106,13 @@ class DataChangeRequestController extends Controller
             'status' => 'pending',
         ];
 
-        // Set current and requested values based on request type
-        if (in_array($validated['request_type'], ['name', 'both'])) {
-            $data['current_name'] = $user->full_name;
+        // Set current and requested values based on what was filled
+        if (!empty($validated['requested_name'])) {
+            $data['current_name'] = $user->name;
             $data['requested_name'] = $validated['requested_name'];
         }
 
-        if (in_array($validated['request_type'], ['email', 'both'])) {
+        if (!empty($validated['requested_email'])) {
             $data['current_email'] = $user->email;
             $data['requested_email'] = $validated['requested_email'];
         }

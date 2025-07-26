@@ -108,7 +108,7 @@ class RegisterController extends Controller
         // Login otomatis setelah registrasi
         Auth::login($user);
 
-        return redirect()->route('profile.setup')
+        return redirect()->route('coach.profile.setup')
             ->with('info', 'Registrasi berhasil! Silakan lengkapi profil Anda untuk mendapatkan persetujuan admin.');
     }
 }

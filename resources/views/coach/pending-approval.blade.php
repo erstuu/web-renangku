@@ -166,7 +166,7 @@
 
                 <!-- Actions -->
                 <div class="flex flex-col space-y-4">
-                    <a href="{{ route('profile.edit') }}"
+                    <a href="{{ route('coach.profile.edit') }}"
                         class="w-full flex justify-center py-2 px-4 border border-blue-300 rounded-md shadow-sm bg-white text-sm font-medium text-blue-700 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                         Edit Profil
                     </a>
