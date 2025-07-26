@@ -290,9 +290,9 @@
                     <div class="space-y-3">
                         @foreach($myRegistrations->take(3) as $registration)
                         <div class="bg-white p-4 rounded border-l-4 
-                            @if($registration->attendance_status === 'pending') border-yellow-500
-                            @elseif($registration->attendance_status === 'confirmed') border-blue-500
-                            @elseif($registration->attendance_status === 'completed') border-green-500
+                            @if($registration->attendance_status === 'registered') border-yellow-500
+                            @elseif($registration->attendance_status === 'attended') border-green-500
+                            @elseif($registration->attendance_status === 'absent') border-orange-500
                             @else border-red-500
                             @endif">
                             <div class="flex justify-between items-start">
@@ -302,21 +302,25 @@
                                     <p class="text-xs text-gray-500">Daftar: {{ $registration->registered_at->format('d M Y, H:i') }}</p>
                                 </div>
                                 <div class="text-right">
-                                    @if($registration->attendance_status === 'pending')
+                                    @if($registration->attendance_status === 'registered')
                                     <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                        Menunggu
+                                        Menunggu Konfirmasi
                                     </span>
-                                    @elseif($registration->attendance_status === 'confirmed')
-                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
-                                        Terkonfirmasi
-                                    </span>
-                                    @elseif($registration->attendance_status === 'completed')
+                                    @elseif($registration->attendance_status === 'attended')
                                     <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                                        Selesai
+                                        Dikonfirmasi
                                     </span>
-                                    @else
+                                    @elseif($registration->attendance_status === 'absent')
+                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-orange-100 text-orange-800">
+                                        Tidak Hadir
+                                    </span>
+                                    @elseif($registration->attendance_status === 'cancelled')
                                     <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
                                         Ditolak
+                                    </span>
+                                    @else
+                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                                        {{ ucfirst($registration->attendance_status) }}
                                     </span>
                                     @endif
                                 </div>

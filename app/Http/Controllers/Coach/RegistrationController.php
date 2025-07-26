@@ -22,20 +22,22 @@ class RegistrationController extends Controller
             ->orderBy('registered_at', 'desc')
             ->paginate(15);
 
-        // Get stats
-        $pendingCount = SessionRegistration::whereHas('trainingSession', function ($query) use ($user) {
+        // Get stats - only count paid registrations
+        $registeredCount = SessionRegistration::whereHas('trainingSession', function ($query) use ($user) {
             $query->where('coach_id', $user->id);
         })
-            ->where('attendance_status', 'pending')
+            ->where('attendance_status', 'registered')
+            ->where('payment_status', 'paid') // Only count paid registrations
             ->count();
 
-        $approvedCount = SessionRegistration::whereHas('trainingSession', function ($query) use ($user) {
+        $attendedCount = SessionRegistration::whereHas('trainingSession', function ($query) use ($user) {
             $query->where('coach_id', $user->id);
         })
-            ->where('attendance_status', 'confirmed')
+            ->where('attendance_status', 'attended')
+            ->where('payment_status', 'paid') // Only count paid registrations
             ->count();
 
-        return view('coach.registrations.index', compact('registrations', 'pendingCount', 'approvedCount'));
+        return view('coach.registrations.index', compact('registrations', 'registeredCount', 'attendedCount'));
     }
 
     public function approve(SessionRegistration $sessionRegistration)
@@ -45,8 +47,14 @@ class RegistrationController extends Controller
             abort(403, 'Unauthorized access');
         }
 
+        // Only allow approval if payment is completed
+        if ($sessionRegistration->payment_status !== 'paid') {
+            return redirect()->route('coach.registrations.index')
+                ->with('error', 'Tidak dapat konfirmasi - pembayaran belum selesai.');
+        }
+
         $sessionRegistration->update([
-            'attendance_status' => 'confirmed'
+            'attendance_status' => 'attended'
         ]);
 
         return redirect()->route('coach.registrations.index')
@@ -60,11 +68,34 @@ class RegistrationController extends Controller
             abort(403, 'Unauthorized access');
         }
 
+        // If already paid, set payment status to refunded
+        $updateData = ['attendance_status' => 'cancelled'];
+        if ($sessionRegistration->payment_status === 'paid') {
+            $updateData['payment_status'] = 'refunded';
+        }
+
+        $sessionRegistration->update($updateData);
+
+        $message = $sessionRegistration->payment_status === 'refunded'
+            ? 'Pendaftaran berhasil ditolak! Pembayaran akan dikembalikan.'
+            : 'Pendaftaran berhasil ditolak!';
+
+        return redirect()->route('coach.registrations.index')
+            ->with('success', $message);
+    }
+
+    public function markAbsent(SessionRegistration $sessionRegistration)
+    {
+        // Ensure this registration is for the coach's session
+        if ($sessionRegistration->trainingSession->coach_id !== Auth::id()) {
+            abort(403, 'Unauthorized access');
+        }
+
         $sessionRegistration->update([
-            'attendance_status' => 'cancelled'
+            'attendance_status' => 'absent'
         ]);
 
         return redirect()->route('coach.registrations.index')
-            ->with('success', 'Pendaftaran berhasil ditolak!');
+            ->with('success', 'Member berhasil ditandai sebagai tidak hadir!');
     }
 }

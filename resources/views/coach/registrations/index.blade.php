@@ -65,7 +65,7 @@
                             </div>
                             <div class="ml-3">
                                 <p class="text-sm font-medium text-yellow-800">Menunggu Konfirmasi</p>
-                                <p class="text-2xl font-bold text-yellow-900">{{ $pendingCount ?? 0 }}</p>
+                                <p class="text-2xl font-bold text-yellow-900">{{ $registeredCount ?? 0 }}</p>
                             </div>
                         </div>
                     </div>
@@ -79,7 +79,7 @@
                             </div>
                             <div class="ml-3">
                                 <p class="text-sm font-medium text-green-800">Dikonfirmasi</p>
-                                <p class="text-2xl font-bold text-green-900">{{ $approvedCount ?? 0 }}</p>
+                                <p class="text-2xl font-bold text-green-900">{{ $attendedCount ?? 0 }}</p>
                             </div>
                         </div>
                     </div>
@@ -106,11 +106,14 @@
                     <button class="filter-tab w-full py-2 px-4 text-sm font-medium rounded-md bg-white text-gray-900 shadow-sm" data-status="all">
                         Semua Pendaftaran
                     </button>
-                    <button class="filter-tab w-full py-2 px-4 text-sm font-medium rounded-md text-gray-600 hover:text-gray-900" data-status="pending">
+                    <button class="filter-tab w-full py-2 px-4 text-sm font-medium rounded-md text-gray-600 hover:text-gray-900" data-status="registered">
                         Menunggu Konfirmasi
                     </button>
-                    <button class="filter-tab w-full py-2 px-4 text-sm font-medium rounded-md text-gray-600 hover:text-gray-900" data-status="confirmed">
+                    <button class="filter-tab w-full py-2 px-4 text-sm font-medium rounded-md text-gray-600 hover:text-gray-900" data-status="attended">
                         Dikonfirmasi
+                    </button>
+                    <button class="filter-tab w-full py-2 px-4 text-sm font-medium rounded-md text-gray-600 hover:text-gray-900" data-status="absent">
+                        Tidak Hadir
                     </button>
                     <button class="filter-tab w-full py-2 px-4 text-sm font-medium rounded-md text-gray-600 hover:text-gray-900" data-status="cancelled">
                         Ditolak
@@ -152,13 +155,17 @@
                                         <div class="mt-2 flex items-center justify-between">
                                             <div class="flex items-center space-x-4">
                                                 <!-- Status Badge -->
-                                                @if($registration->attendance_status === 'pending')
+                                                @if($registration->attendance_status === 'registered')
                                                 <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
                                                     Menunggu Konfirmasi
                                                 </span>
-                                                @elseif($registration->attendance_status === 'confirmed')
+                                                @elseif($registration->attendance_status === 'attended')
                                                 <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
                                                     Dikonfirmasi
+                                                </span>
+                                                @elseif($registration->attendance_status === 'absent')
+                                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-orange-100 text-orange-800">
+                                                    Tidak Hadir
                                                 </span>
                                                 @elseif($registration->attendance_status === 'cancelled')
                                                 <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
@@ -175,9 +182,13 @@
                                                 <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
                                                     Sudah Bayar
                                                 </span>
-                                                @else
+                                                @elseif($registration->payment_status === 'pending')
                                                 <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-orange-100 text-orange-800">
                                                     Belum Bayar
+                                                </span>
+                                                @elseif($registration->payment_status === 'refunded')
+                                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                                                    Dikembalikan
                                                 </span>
                                                 @endif
                                             </div>
@@ -194,7 +205,7 @@
                             </div>
 
                             <!-- Action Buttons -->
-                            @if($registration->attendance_status === 'pending')
+                            @if($registration->attendance_status === 'registered' && $registration->payment_status === 'paid')
                             <div class="flex items-center space-x-2 ml-4">
                                 <form method="POST" action="{{ route('coach.registrations.approve', $registration) }}" class="inline">
                                     @csrf
@@ -207,6 +218,20 @@
                                     <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded text-sm font-medium transition-colors"
                                         onclick="return confirm('Apakah Anda yakin ingin menolak pendaftaran ini?')">
                                         Tolak
+                                    </button>
+                                </form>
+                            </div>
+                            @elseif($registration->attendance_status === 'registered' && $registration->payment_status === 'pending')
+                            <div class="flex items-center ml-4">
+                                <span class="text-sm text-gray-500 italic">Menunggu pembayaran...</span>
+                            </div>
+                            @elseif($registration->attendance_status === 'attended')
+                            <div class="flex items-center space-x-2 ml-4">
+                                <form method="POST" action="{{ route('coach.registrations.mark-absent', $registration) }}" class="inline">
+                                    @csrf
+                                    <button type="submit" class="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded text-sm font-medium transition-colors"
+                                        onclick="return confirm('Tandai member ini sebagai tidak hadir?')">
+                                        Tidak Hadir
                                     </button>
                                 </form>
                             </div>

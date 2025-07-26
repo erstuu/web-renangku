@@ -147,25 +147,6 @@
                                 </span>
                                 @endif
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                @if($registration->payment_status === 'pending')
-                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                    Menunggu Pembayaran
-                                </span>
-                                @elseif($registration->payment_status === 'paid')
-                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                                    Lunas
-                                </span>
-                                @elseif($registration->payment_status === 'refunded')
-                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
-                                    Dikembalikan
-                                </span>
-                                @else
-                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
-                                    {{ ucfirst($registration->payment_status) }}
-                                </span>
-                                @endif
-                            </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                 {{ $registration->registered_at->format('d M Y, H:i') }}
                             </td>

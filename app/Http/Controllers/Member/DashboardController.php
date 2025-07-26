@@ -42,7 +42,7 @@ class DashboardController extends Controller
             ->whereHas('trainingSession', function ($query) {
                 $query->where('start_time', '>=', now());
             })
-            ->where('attendance_status', 'confirmed')
+            ->where('attendance_status', 'attended')
             ->with('trainingSession.coach')
             ->orderBy('registered_at', 'desc')
             ->limit(3)
@@ -51,10 +51,10 @@ class DashboardController extends Controller
         // Get statistics
         $totalRegistrations = SessionRegistration::where('user_id', $user->id)->count();
         $completedSessions = SessionRegistration::where('user_id', $user->id)
-            ->where('attendance_status', 'completed')
+            ->where('attendance_status', 'attended')
             ->count();
         $pendingRegistrations = SessionRegistration::where('user_id', $user->id)
-            ->where('attendance_status', 'pending')
+            ->where('attendance_status', 'registered')
             ->count();
 
         // Get recent announcements
@@ -62,7 +62,6 @@ class DashboardController extends Controller
             ->orderBy('created_at', 'desc')
             ->limit(3)
             ->get();
-
         return view('member.dashboard', compact(
             'user',
             'memberProfile',
