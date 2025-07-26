@@ -74,6 +74,13 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize notifications
+            const notificationManager = new NotificationManager();
+        });
+    </script>
 </body>
 
 </html>

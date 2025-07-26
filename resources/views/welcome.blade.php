@@ -8,12 +8,13 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="{{ asset('js/notifications.js') }}"></script>
 </head>
 
 <body class="bg-gradient-to-br from-blue-500 via-blue-600 to-blue-800 min-h-screen flex items-center justify-center">
     <!-- Logout Success Message -->
     @if (session('success'))
-    <div class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
+    <div class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 notification-message">
         <div class="bg-white border border-green-400 text-green-700 px-6 py-3 rounded-lg shadow-lg flex items-center space-x-3">
             <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
@@ -99,21 +100,12 @@
         <div class="absolute bottom-1/3 right-1/3 w-5 h-5 bg-white bg-opacity-15 rounded-full animate-bounce"></div>
     </div>
 
-    <!-- Auto-hide success message -->
-    @if (session('success'))
     <script>
-        setTimeout(function() {
-            const successMessage = document.querySelector('.fixed.top-4');
-            if (successMessage) {
-                successMessage.style.transition = 'opacity 0.5s ease-out';
-                successMessage.style.opacity = '0';
-                setTimeout(function() {
-                    successMessage.remove();
-                }, 500);
-            }
-        }, 5000); // Hide after 5 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize notifications
+            const notificationManager = new NotificationManager();
+        });
     </script>
-    @endif
 </body>
 
 </html>

@@ -48,8 +48,25 @@
         @endif
 
         <div class="bg-white rounded-lg shadow p-6">
-            <h2 class="text-2xl font-bold mb-4">Selamat Datang, Coach {{ Auth::user()->full_name }}!</h2>
-            <p class="text-gray-600 mb-6">Anda login sebagai Coach di Web Renangku.</p>
+            <div class="flex items-start justify-between mb-6">
+                <div class="flex-1">
+                    <h2 class="text-2xl font-bold mb-4">Selamat Datang, Coach {{ Auth::user()->full_name }}!</h2>
+                    <p class="text-gray-600">Anda login sebagai Coach di Web Renangku.</p>
+                </div>
+                <div class="flex-shrink-0 ml-6">
+                    @if(Auth::user()->coachProfile && Auth::user()->coachProfile->profile_photo)
+                    <img src="{{ asset('storage/' . Auth::user()->coachProfile->profile_photo) }}"
+                        alt="Foto Profile {{ Auth::user()->full_name }}"
+                        class="w-20 h-20 rounded-full object-cover border-4 border-green-200 shadow-lg">
+                    @else
+                    <div class="w-20 h-20 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center border-4 border-green-200 shadow-lg">
+                        <span class="text-white font-bold text-2xl">
+                            {{ substr(Auth::user()->full_name, 0, 1) }}
+                        </span>
+                    </div>
+                    @endif
+                </div>
+            </div>
 
             <!-- Quick Alert for Pending Registrations -->
             @if(isset($pendingRegistrations) && $pendingRegistrations > 0)
@@ -197,7 +214,10 @@
                     </div>
                     <p class="text-yellow-600 mb-4">Kelola informasi profil dan sertifikasi Anda</p>
                     <div class="space-y-2">
-                        <a href="{{ route('coach.profile.edit') }}" class="block w-full bg-yellow-600 text-white text-center py-2 rounded hover:bg-yellow-700 transition-colors">
+                        <a href="{{ route('coach.profile.show') }}" class="block w-full bg-yellow-600 text-white text-center py-2 rounded hover:bg-yellow-700 transition-colors">
+                            Lihat Profil
+                        </a>
+                        <a href="{{ route('coach.profile.edit') }}" class="block w-full bg-yellow-100 text-yellow-800 text-center py-2 rounded hover:bg-yellow-200 transition-colors">
                             Edit Profil
                         </a>
                     </div>
@@ -342,6 +362,13 @@
             @endif
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize notifications
+            const notificationManager = new NotificationManager();
+        });
+    </script>
 </body>
 
 </html>
