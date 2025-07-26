@@ -4,9 +4,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
 
-// Routes untuk login - middleware 'guest' agar user yang sudah login tidak bisa akses
-Route::get('/login', [LoginController::class, 'create'])
-    ->middleware('guest')
+// Routes untuk login - redirect ke role selector karena kita menggunakan role-based login
+Route::get('/login', function () {
+    return redirect()->route('role.selector')
+        ->with('info', 'Silakan pilih role Anda untuk login.');
+})->middleware('guest')
     ->name('login');
 
 Route::post('/login', [LoginController::class, 'store'])
