@@ -223,7 +223,7 @@
                     </p>
                 </div>
 
-                <form method="POST" action="{{ route('coach.request-data-change') }}" class="space-y-4">
+                <form method="POST" action="{{ route('coach.data-change-requests.store') }}" class="space-y-4">
                     @csrf
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <!-- Current Name -->

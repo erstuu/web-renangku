@@ -45,6 +45,7 @@ Route::prefix('registrations')->name('registrations.')->group(function () {
     Route::get('/', [RegistrationController::class, 'index'])->name('index');
     Route::post('/{sessionRegistration}/approve', [RegistrationController::class, 'approve'])->name('approve');
     Route::post('/{sessionRegistration}/reject', [RegistrationController::class, 'reject'])->name('reject');
+    Route::post('/{sessionRegistration}/mark-absent', [RegistrationController::class, 'markAbsent'])->name('mark-absent');
 });
 
 // Coach Data Change Requests
@@ -54,6 +55,3 @@ Route::prefix('data-change-requests')->name('data-change-requests.')->group(func
     Route::post('/', [DataChangeRequestController::class, 'store'])->name('store');
     Route::get('/{dataChangeRequest}', [DataChangeRequestController::class, 'show'])->name('show');
 });
-
-// Alias route untuk request data change
-Route::post('/request-data-change', [DataChangeRequestController::class, 'store'])->name('request-data-change');
