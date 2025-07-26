@@ -52,16 +52,19 @@ Route::get('/auth/role-selector', function () {
 
 // Admin Routes - prefix /admin
 Route::prefix('admin')
+    ->name('admin.')
     ->middleware(['auth', 'role:admin'])
     ->group(base_path('routes/admin.php'));
 
 // Coach Routes - prefix /coach  
 Route::prefix('coach')
+    ->name('coach.')
     ->middleware(['auth', 'role:coach'])
     ->group(base_path('routes/coach.php'));
 
 // Member Routes - prefix /member
 Route::prefix('member')
+    ->name('member.')
     ->middleware(['auth', 'role:member'])
     ->group(base_path('routes/member.php'));
 
