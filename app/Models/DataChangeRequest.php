@@ -57,6 +57,24 @@ class DataChangeRequest extends Model
     }
 
     /**
+     * Get the status attribute based on reviewed_at and admin_notes
+     */
+    public function getStatusAttribute()
+    {
+        if (is_null($this->reviewed_at)) {
+            return 'pending';
+        }
+
+        // Check the 'status' column if it exists
+        if (isset($this->attributes['status'])) {
+            return $this->attributes['status'];
+        }
+
+        // Fallback logic if status column doesn't exist
+        return $this->admin_notes === null ? 'approved' : 'rejected';
+    }
+
+    /**
      * Scope to get pending requests
      */
     public function scopePending($query)

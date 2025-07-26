@@ -1,6 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\CoachController;
+use App\Http\Controllers\Admin\MemberController;
+use App\Http\Controllers\Admin\TrainingSessionController;
+use App\Http\Controllers\Admin\AnnouncementController;
+use App\Http\Controllers\Admin\DataChangeRequestController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,64 +20,54 @@ use Illuminate\Support\Facades\Route;
 */
 
 // Admin Dashboard
-Route::get('/dashboard', function () {
-    return view('admin.dashboard');
-})->name('admin.dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 // Admin Coach Management Routes
 Route::prefix('coaches')->name('coaches.')->group(function () {
-    // Menampilkan daftar coach yang menunggu approval
-    Route::get('/pending', function () {
-        // TODO: Implement admin coach approval management
-        return view('admin.coaches.pending');
-    })->name('pending');
-
-    // Approve coach
-    Route::post('/{id}/approve', function ($id) {
-        // TODO: Implement coach approval logic
-    })->name('approve');
-
-    // Reject coach
-    Route::post('/{id}/reject', function ($id) {
-        // TODO: Implement coach rejection logic
-    })->name('reject');
-
-    // Daftar semua coach
-    Route::get('/', function () {
-        // TODO: Implement coaches list
-        return view('admin.coaches.index');
-    })->name('index');
+    Route::get('/', [CoachController::class, 'index'])->name('index');
+    Route::get('/pending', [CoachController::class, 'pending'])->name('pending');
+    Route::get('/create', [CoachController::class, 'create'])->name('create');
+    Route::post('/', [CoachController::class, 'store'])->name('store');
+    Route::get('/{id}', [CoachController::class, 'show'])->name('show');
+    Route::post('/{id}/approve', [CoachController::class, 'approve'])->name('approve');
+    Route::post('/{id}/reject', [CoachController::class, 'reject'])->name('reject');
+    Route::post('/{id}/toggle-status', [CoachController::class, 'toggleStatus'])->name('toggle-status');
+    Route::delete('/{id}', [CoachController::class, 'destroy'])->name('destroy');
 });
 
 // Admin Member Management Routes
 Route::prefix('members')->name('members.')->group(function () {
-    Route::get('/', function () {
-        // TODO: Implement members list
-        return view('admin.members.index');
-    })->name('index');
+    Route::get('/', [MemberController::class, 'index'])->name('index');
+    Route::get('/{id}', [MemberController::class, 'show'])->name('show');
+    Route::post('/{id}/update-membership', [MemberController::class, 'updateMembershipStatus'])->name('update-membership');
+    Route::post('/{id}/toggle-status', [MemberController::class, 'toggleStatus'])->name('toggle-status');
+    Route::delete('/{id}', [MemberController::class, 'destroy'])->name('destroy');
 });
 
 // Admin Training Sessions Management
 Route::prefix('training-sessions')->name('training-sessions.')->group(function () {
-    Route::get('/', function () {
-        // TODO: Implement training sessions management
-        return view('admin.training-sessions.index');
-    })->name('index');
+    Route::get('/', [TrainingSessionController::class, 'index'])->name('index');
+    Route::get('/{id}', [TrainingSessionController::class, 'show'])->name('show');
+    Route::post('/{id}/toggle-status', [TrainingSessionController::class, 'toggleStatus'])->name('toggle-status');
+    Route::delete('/{id}', [TrainingSessionController::class, 'destroy'])->name('destroy');
 });
 
 // Admin Announcements Management
 Route::prefix('announcements')->name('announcements.')->group(function () {
-    Route::get('/', function () {
-        // TODO: Implement announcements management
-        return view('admin.announcements.index');
-    })->name('index');
+    Route::get('/', [AnnouncementController::class, 'index'])->name('index');
+    Route::get('/create', [AnnouncementController::class, 'create'])->name('create');
+    Route::post('/', [AnnouncementController::class, 'store'])->name('store');
+    Route::get('/{id}', [AnnouncementController::class, 'show'])->name('show');
+    Route::get('/{id}/edit', [AnnouncementController::class, 'edit'])->name('edit');
+    Route::put('/{id}', [AnnouncementController::class, 'update'])->name('update');
+    Route::post('/{id}/toggle-publish', [AnnouncementController::class, 'togglePublishStatus'])->name('toggle-publish');
+    Route::delete('/{id}', [AnnouncementController::class, 'destroy'])->name('destroy');
+});
 
-    Route::get('/create', function () {
-        // TODO: Implement announcement creation
-        return view('admin.announcements.create');
-    })->name('create');
-
-    Route::post('/', function () {
-        // TODO: Implement announcement store
-    })->name('store');
+// Admin Data Change Requests Management
+Route::prefix('data-change-requests')->name('data-change-requests.')->group(function () {
+    Route::get('/', [DataChangeRequestController::class, 'index'])->name('index');
+    Route::get('/{id}', [DataChangeRequestController::class, 'show'])->name('show');
+    Route::post('/{id}/approve', [DataChangeRequestController::class, 'approve'])->name('approve');
+    Route::post('/{id}/reject', [DataChangeRequestController::class, 'reject'])->name('reject');
 });
