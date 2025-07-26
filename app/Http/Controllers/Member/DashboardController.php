@@ -22,9 +22,12 @@ class DashboardController extends Controller
 
         $memberProfile = $user->memberProfile;
 
-        // Get available training sessions (active and future)
+        // Get available training sessions (active and future) from active coaches only
         $availableSessions = TrainingSession::where('is_active', true)
             ->where('start_time', '>=', now())
+            ->whereHas('coach', function ($query) {
+                $query->where('is_active', true);
+            })
             ->with(['coach', 'sessionRegistrations'])
             ->orderBy('start_time')
             ->limit(6)

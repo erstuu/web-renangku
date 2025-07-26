@@ -17,6 +17,9 @@ class TrainingSessionController extends Controller
     {
         $availableSessions = TrainingSession::with(['coach'])
             ->where('is_active', true)
+            ->whereHas('coach', function ($query) {
+                $query->where('is_active', true);
+            })
             ->orderBy('start_time', 'asc')
             ->get();
 
