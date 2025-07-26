@@ -75,10 +75,20 @@ class TrainingSessionController extends Controller
             abort(403, 'Unauthorized access');
         }
 
+        // Check if there are any registrations for this session
+        $hasRegistrations = $trainingSession->sessionRegistrations()->count() > 0;
+
+        // If session has registrations and coach tries to change start_time to past, prevent it
+        if ($hasRegistrations && strtotime($request->start_time) <= time()) {
+            return back()->withErrors([
+                'start_time' => 'Tidak dapat mengubah waktu sesi menjadi masa lalu karena sudah ada member yang terdaftar.'
+            ])->withInput();
+        }
+
         $request->validate([
             'session_name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'start_time' => 'required|date',
+            'start_time' => $hasRegistrations ? 'required|date|after:now' : 'required|date',
             'end_time' => 'required|date|after:start_time',
             'location' => 'required|string|max:255',
             'max_capacity' => 'required|integer|min:1|max:50',

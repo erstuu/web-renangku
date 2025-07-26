@@ -68,6 +68,30 @@
                         <p><strong>Waktu:</strong> {{ \Carbon\Carbon::parse($session->start_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($session->end_time)->format('H:i') }}</p>
                         <p><strong>Lokasi:</strong> {{ $session->location }}</p>
                         <p><strong>Kapasitas:</strong> {{ $session->sessionRegistrations->count() }}/{{ $session->max_capacity }}</p>
+                        <p><strong>Jenis Sesi:</strong>
+                            @if($session->session_type === 'group')
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">Grup</span>
+                            @elseif($session->session_type === 'private')
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800">Privat</span>
+                            @elseif($session->session_type === 'competition')
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Kompetisi</span>
+                            @else
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">{{ ucfirst($session->session_type) }}</span>
+                            @endif
+                        </p>
+                        <p><strong>Level Kemampuan:</strong>
+                            @if($session->skill_level === 'beginner')
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Pemula</span>
+                            @elseif($session->skill_level === 'intermediate')
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Menengah</span>
+                            @elseif($session->skill_level === 'advanced')
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Lanjutan</span>
+                            @elseif($session->skill_level === 'all')
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">Semua Level</span>
+                            @else
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">{{ ucfirst($session->skill_level) }}</span>
+                            @endif
+                        </p>
                         <p><strong>Harga:</strong>
                             @if($session->price > 0)
                             Rp {{ number_format($session->price, 0, ',', '.') }}
@@ -83,38 +107,68 @@
                     @if($isRegistered)
                     <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-3">
                         ✓ Anda sudah terdaftar
+                        @if($registration)
+                        <br><small class="text-sm">
+                            Status:
+                            @if($registration->attendance_status === 'registered')
+                            <span class="text-yellow-600">Menunggu konfirmasi pelatih</span>
+                            @elseif($registration->attendance_status === 'attended')
+                            <span class="text-green-600">Dikonfirmasi - Hadir</span>
+                            @elseif($registration->attendance_status === 'absent')
+                            <span class="text-red-600">Tidak hadir</span>
+                            @elseif($registration->attendance_status === 'cancelled')
+                            <span class="text-gray-600">Dibatalkan</span>
+                            @endif
+                        </small>
+                        @endif
                     </div>
+
+                    @if($session->start_time > now() && $registration && $registration->attendance_status === 'registered')
                     <form action="{{ route('member.training-sessions.cancel', $session->id) }}" method="POST">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="w-full py-2 px-4 bg-red-600 text-white rounded-md hover:bg-red-700"
-                            onclick="return confirm('Yakin ingin membatalkan?')">
+                            onclick="return confirm('Yakin ingin membatalkan pendaftaran?')">
                             Batalkan Pendaftaran
                         </button>
                     </form>
-                    @elseif($availableSlots > 0)
-                    <a href="{{ route('member.payment.show', $session->id) }}" class="w-full py-2 px-4 bg-green-600 text-white rounded-md hover:bg-green-700 inline-block text-center">
-                        @if($session->price > 0)
-                        Daftar & Bayar (Rp {{ number_format($session->price, 0, ',', '.') }})
-                        @else
-                        Daftar Gratis
-                        @endif
-                    </a>
+                    @elseif($session->start_time > now() && $registration && $registration->attendance_status !== 'registered')
+                    <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded text-center">
+                        Pendaftaran sudah dikonfirmasi pelatih.<br>
+                        Untuk pembatalan, silakan hubungi pelatih.
+                    </div>
                     @else
-                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-                        Sesi sudah penuh
+                    <div class="bg-gray-100 border border-gray-400 text-gray-600 px-4 py-3 rounded text-center">
+                        Sesi sudah dimulai - tidak dapat dibatalkan
                     </div>
                     @endif
+                    @elseif($session->start_time <= now())
+                        <div class="bg-gray-100 border border-gray-400 text-gray-600 px-4 py-3 rounded text-center">
+                        Pendaftaran sudah ditutup
                 </div>
+                @elseif($availableSlots > 0)
+                <a href="{{ route('member.payment.show', $session->id) }}" class="w-full py-2 px-4 bg-green-600 text-white rounded-md hover:bg-green-700 inline-block text-center">
+                    @if($session->price > 0)
+                    Daftar & Bayar (Rp {{ number_format($session->price, 0, ',', '.') }})
+                    @else
+                    Daftar Gratis
+                    @endif
+                </a>
+                @else
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                    Sesi sudah penuh
+                </div>
+                @endif
             </div>
-
-            @if($session->description)
-            <div class="mt-6">
-                <h3 class="text-lg font-semibold mb-3">Deskripsi</h3>
-                <p class="text-gray-700">{{ $session->description }}</p>
-            </div>
-            @endif
         </div>
+
+        @if($session->description)
+        <div class="mt-6">
+            <h3 class="text-lg font-semibold mb-3">Deskripsi</h3>
+            <p class="text-gray-700">{{ $session->description }}</p>
+        </div>
+        @endif
+    </div>
     </div>
 
     <script>

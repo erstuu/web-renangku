@@ -195,7 +195,18 @@
                                 id="start_time"
                                 name="start_time"
                                 value="{{ old('start_time', $trainingSession->start_time->format('Y-m-d\TH:i')) }}"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent @error('start_time') border-red-500 @enderror">
+                                @if($trainingSession->sessionRegistrations->count() > 0)
+                            min="{{ now()->format('Y-m-d\TH:i') }}"
+                            @endif
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent @error('start_time') border-red-500 @enderror">
+                            @if($trainingSession->sessionRegistrations->count() > 0)
+                            <p class="text-sm text-yellow-600 mt-1">
+                                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                                </svg>
+                                Sesi ini memiliki {{ $trainingSession->sessionRegistrations->count() }} registrasi. Waktu tidak boleh diubah ke masa lalu.
+                            </p>
+                            @endif
                             @error('start_time')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror

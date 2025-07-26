@@ -47,30 +47,34 @@
         @if($availableSessions->count() > 0)
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach($availableSessions as $session)
-            <div class="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
+            <div class="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow {{ $session->start_time <= now() ? 'opacity-75' : '' }}">
                 <!-- Coach Profile Section -->
-                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4 border-b border-gray-200">
+                <div class="bg-gradient-to-r {{ $session->start_time <= now() ? 'from-gray-50 to-gray-100' : 'from-blue-50 to-indigo-50' }} px-6 py-4 border-b border-gray-200">
                     <div class="flex items-center space-x-4">
                         <!-- Coach Photo -->
                         <div class="flex-shrink-0">
                             @if($session->coach && $session->coach->coachProfile && $session->coach->coachProfile->profile_photo)
                             <img src="{{ asset('storage/' . $session->coach->coachProfile->profile_photo) }}"
                                 alt="{{ $session->coach->name }}"
-                                class="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm">
+                                class="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm {{ $session->start_time <= now() ? 'grayscale' : '' }}">
                             @else
-                            <div class="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center text-white font-semibold text-lg border-2 border-white shadow-sm">
+                            <div class="w-12 h-12 rounded-full {{ $session->start_time <= now() ? 'bg-gray-400' : 'bg-blue-500' }} flex items-center justify-center text-white font-semibold text-lg border-2 border-white shadow-sm">
                                 {{ substr($session->coach->name ?? 'C', 0, 1) }}
                             </div>
                             @endif
-                        </div> <!-- Coach Info -->
+                        </div>
+                        <!-- Coach Info -->
                         <div class="flex-1 min-w-0">
-                            <h3 class="text-lg font-semibold text-gray-900 truncate">{{ $session->session_name }}</h3>
-                            <p class="text-sm text-blue-600 font-medium">Coach {{ $session->coach->name ?? 'TBA' }}</p>
+                            <h3 class="text-lg font-semibold {{ $session->start_time <= now() ? 'text-gray-500' : 'text-gray-900' }} truncate">
+                                {{ $session->session_name }}
+                                @if($session->start_time <= now())
+                                    <span class="text-sm font-normal text-gray-400">(Sudah berlalu)</span>
+                                    @endif
+                            </h3>
+                            <p class="text-sm {{ $session->start_time <= now() ? 'text-gray-400' : 'text-blue-600' }} font-medium">Coach {{ $session->coach->name ?? 'TBA' }}</p>
                         </div>
                     </div>
-                </div>
-
-                <!-- Session Info -->
+                </div> <!-- Session Info -->
                 <div class="px-6 py-4">
                     <div class="space-y-3">
                         <div class="flex items-center text-sm text-gray-600">
@@ -153,20 +157,24 @@
                         <span class="flex-1 text-center py-2 px-3 text-sm bg-green-100 text-green-800 rounded-md">
                             ✓ Terdaftar
                         </span>
-                        @elseif($session->sessionRegistrations->count() >= $session->max_capacity)
-                        <span class="flex-1 text-center py-2 px-3 text-sm bg-red-100 text-red-800 rounded-md">
-                            Penuh
-                        </span>
-                        @else
-                        <a href="{{ route('member.payment.show', $session->id) }}"
-                            class="flex-1 text-center py-2 px-3 text-sm bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">
-                            @if($session->price > 0)
-                            Daftar & Bayar
+                        @elseif($session->start_time <= now())
+                            <span class="flex-1 text-center py-2 px-3 text-sm bg-gray-100 text-gray-600 rounded-md cursor-not-allowed">
+                            Sudah Tutup
+                            </span>
+                            @elseif($session->sessionRegistrations->count() >= $session->max_capacity)
+                            <span class="flex-1 text-center py-2 px-3 text-sm bg-red-100 text-red-800 rounded-md">
+                                Penuh
+                            </span>
                             @else
-                            Daftar Gratis
+                            <a href="{{ route('member.payment.show', $session->id) }}"
+                                class="flex-1 text-center py-2 px-3 text-sm bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">
+                                @if($session->price > 0)
+                                Daftar & Bayar
+                                @else
+                                Daftar Gratis
+                                @endif
+                            </a>
                             @endif
-                        </a>
-                        @endif
                     </div>
                 </div>
             </div>

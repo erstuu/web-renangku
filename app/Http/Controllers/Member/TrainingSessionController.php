@@ -17,7 +17,6 @@ class TrainingSessionController extends Controller
     {
         $availableSessions = TrainingSession::with(['coach'])
             ->where('is_active', true)
-            ->where('start_time', '>', now())
             ->orderBy('start_time', 'asc')
             ->get();
 
@@ -36,14 +35,16 @@ class TrainingSessionController extends Controller
         $session = TrainingSession::with(['coach', 'sessionRegistrations.member'])
             ->findOrFail($id);
 
-        $isRegistered = SessionRegistration::where('training_session_id', $id)
+        $registration = SessionRegistration::where('training_session_id', $id)
             ->where('user_id', Auth::id())
-            ->exists();
+            ->first();
+
+        $isRegistered = $registration !== null;
 
         $registeredCount = $session->sessionRegistrations->count();
         $availableSlots = $session->max_capacity - $registeredCount;
 
-        return view('member.training-sessions.show', compact('session', 'isRegistered', 'availableSlots'));
+        return view('member.training-sessions.show', compact('session', 'isRegistered', 'registration', 'availableSlots'));
     }
 
     /**
@@ -90,8 +91,30 @@ class TrainingSessionController extends Controller
             return back()->with('error', 'Anda tidak terdaftar untuk sesi ini.');
         }
 
-        $registration->delete();
+        // Check if session has already started
+        $session = $registration->trainingSession;
+        if ($session->start_time <= now()) {
+            return back()->with('error', 'Tidak dapat membatalkan pendaftaran karena sesi sudah dimulai.');
+        }
 
-        return back()->with('success', 'Pendaftaran berhasil dibatalkan.');
+        // Check if registration has been confirmed by coach
+        if ($registration->attendance_status !== 'registered') {
+            return back()->with('error', 'Tidak dapat membatalkan pendaftaran karena sudah dikonfirmasi oleh pelatih. Silakan hubungi pelatih untuk pembatalan.');
+        }
+
+        // Handle refund if payment was made
+        if ($registration->payment_status === 'paid' && $session->price > 0) {
+            // Set payment status to refunded
+            $registration->update(['payment_status' => 'refunded']);
+
+            // Delete the registration
+            $registration->delete();
+
+            return back()->with('success', 'Pendaftaran berhasil dibatalkan dan pembayaran akan dikembalikan.');
+        } else {
+            // For free sessions or unpaid registrations, just delete
+            $registration->delete();
+            return back()->with('success', 'Pendaftaran berhasil dibatalkan.');
+        }
     }
 }
