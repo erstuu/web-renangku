@@ -190,7 +190,7 @@ class PaymentController extends Controller
     }
 
     /**
-     * Simulate payment completion (in real app, this would be webhook from payment gateway).
+     * Simulate payment completion
      */
     public function complete(Request $request, $registrationId)
     {
