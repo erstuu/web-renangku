@@ -16,6 +16,7 @@ class CoachProfile extends Model
      */
     protected $fillable = [
         'user_id',
+        'profile_photo',
         'specialization',
         'bio',
         'contact_info',

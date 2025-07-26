@@ -76,13 +76,13 @@
                     </div>
                 </div>
 
-                <form method="POST" action="{{ route('profile.store') }}" class="space-y-6">
+                <form method="POST" action="{{ route('coach.profile.store') }}" class="space-y-6" enctype="multipart/form-data">
                     @csrf
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Specialization -->
                         <div class="md:col-span-2">
-                            <label for="specialization" class="block text-sm font-medium text-gray-700">
+                            <label for="specialization" class="block text-sm font-medium mt-4 text-gray-700">
                                 Spesialisasi <span class="text-red-500">*</span>
                             </label>
                             <input id="specialization" name="specialization" type="text"

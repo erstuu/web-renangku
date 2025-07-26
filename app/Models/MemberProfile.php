@@ -16,11 +16,16 @@ class MemberProfile extends Model
      */
     protected $fillable = [
         'user_id',
-        'date_of_birth',
         'phone',
+        'date_of_birth',
+        'gender',
         'address',
         'emergency_contact_name',
         'emergency_contact_phone',
+        'emergency_contact_relationship',
+        'medical_conditions',
+        'swimming_experience',
+        'profile_photo',
         'membership_status',
         'joined_at',
         'medical_notes',
