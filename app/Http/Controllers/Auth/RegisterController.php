@@ -91,7 +91,7 @@ class RegisterController extends Controller
     {
         $validatedData = $request->validated();
 
-        // Buat user baru
+        // Buat user baru dengan status pending approval
         $user = User::create([
             'full_name' => $validatedData['full_name'],
             'username' => $validatedData['username'],
@@ -99,12 +99,16 @@ class RegisterController extends Controller
             'password' => Hash::make($validatedData['password']),
             'role' => 'coach',
             'is_active' => true,
+            'approval_status' => 'pending',
         ]);
+
+        // Buat coach profile kosong
+        $user->coachProfile()->create([]);
 
         // Login otomatis setelah registrasi
         Auth::login($user);
 
-        return redirect()->route('coach.dashboard')
-            ->with('success', 'Registrasi coach berhasil! Selamat datang.');
+        return redirect()->route('profile.setup')
+            ->with('info', 'Registrasi berhasil! Silakan lengkapi profil Anda untuk mendapatkan persetujuan admin.');
     }
 }

@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Admin - Web Renangku</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="{{ asset('js/notifications.js') }}"></script>
 </head>
 
 <body class="bg-red-50 min-h-screen flex items-center justify-center">
@@ -31,19 +32,19 @@
         @endif
 
         @if (session('success'))
-        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4 notification-message">
             {{ session('success') }}
         </div>
         @endif
 
         @if (session('error'))
-        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 notification-message">
             {{ session('error') }}
         </div>
         @endif
 
         @if (session('info'))
-        <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded mb-4">
+        <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded mb-4 notification-message">
             {{ session('info') }}
         </div>
         @endif

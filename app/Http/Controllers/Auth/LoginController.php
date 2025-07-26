@@ -175,24 +175,15 @@ class LoginController extends Controller
      */
     public function destroy(Request $request)
     {
-        // Simpan role user sebelum logout
-        $userRole = Auth::user()->role;
+        // Simpan nama user sebelum logout untuk pesan personal
+        $userName = Auth::user()->full_name;
 
         Auth::logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        // Redirect berdasarkan role ke halaman login yang sesuai
-        switch ($userRole) {
-            case 'admin':
-                return redirect('/user/admin/login')->with('success', 'Admin telah berhasil logout.');
-            case 'coach':
-                return redirect('/user/coach/login')->with('success', 'Coach telah berhasil logout.');
-            case 'member':
-                return redirect('/user/member/login')->with('success', 'Member telah berhasil logout.');
-            default:
-                return redirect('/login')->with('success', 'Anda telah berhasil logout.');
-        }
+        // Redirect ke landing page dengan pesan sukses
+        return redirect('/')->with('success', "Selamat tinggal, {$userName}! Anda telah berhasil logout.");
     }
 }

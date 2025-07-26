@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daftar Member - Web Renangku</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="{{ asset('js/notifications.js') }}"></script>
 </head>
 
 <body class="bg-blue-50 min-h-screen flex items-center justify-center">
