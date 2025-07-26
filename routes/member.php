@@ -1,6 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Member\DashboardController;
+use App\Http\Controllers\Member\ProfileController;
+use App\Http\Controllers\Member\RegistrationController;
+use App\Http\Controllers\Member\PaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,46 +18,26 @@ use Illuminate\Support\Facades\Route;
 */
 
 // Member Dashboard
-Route::get('/dashboard', function () {
-    return view('member.dashboard');
-})->name('member.dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 // Member Profile Management
 Route::prefix('profile')->name('profile.')->group(function () {
-    Route::get('/', function () {
-        // TODO: Implement member profile view
-        return view('member.profile.show');
-    })->name('show');
-
-    Route::get('/edit', function () {
-        // TODO: Implement member profile edit
-        return view('member.profile.edit');
-    })->name('edit');
-
-    Route::put('/', function () {
-        // TODO: Implement member profile update
-    })->name('update');
+    Route::get('/', [ProfileController::class, 'show'])->name('show');
+    Route::get('/edit', [ProfileController::class, 'edit'])->name('edit');
+    Route::put('/', [ProfileController::class, 'update'])->name('update');
 });
 
 // Member Training Sessions
 Route::prefix('training-sessions')->name('training-sessions.')->group(function () {
-    Route::get('/', function () {
-        // TODO: Implement available training sessions for members
-        return view('member.training-sessions.index');
-    })->name('index');
-
-    Route::get('/{id}', function ($id) {
-        // TODO: Implement training session detail
-        return view('member.training-sessions.show', compact('id'));
-    })->name('show');
+    Route::get('/', [App\Http\Controllers\Member\TrainingSessionController::class, 'index'])->name('index');
+    Route::get('/{id}', [App\Http\Controllers\Member\TrainingSessionController::class, 'show'])->name('show');
+    Route::post('/{sessionId}/register', [App\Http\Controllers\Member\TrainingSessionController::class, 'register'])->name('register');
+    Route::delete('/{sessionId}/cancel', [App\Http\Controllers\Member\TrainingSessionController::class, 'cancelRegistration'])->name('cancel');
 });
 
 // Member Session Registrations
 Route::prefix('registrations')->name('registrations.')->group(function () {
-    Route::get('/', function () {
-        // TODO: Implement member registrations history
-        return view('member.registrations.index');
-    })->name('index');
+    Route::get('/', [RegistrationController::class, 'index'])->name('index');
 
     Route::post('/training-sessions/{sessionId}', function ($sessionId) {
         // TODO: Implement member registration to training session
@@ -75,4 +59,12 @@ Route::prefix('announcements')->name('announcements.')->group(function () {
         // TODO: Implement announcement detail
         return view('member.announcements.show', compact('id'));
     })->name('show');
+});
+
+// Member Payment Routes
+Route::prefix('payment')->name('payment.')->group(function () {
+    Route::get('/session/{sessionId}', [PaymentController::class, 'show'])->name('show');
+    Route::post('/session/{sessionId}', [PaymentController::class, 'process'])->name('process');
+    Route::get('/confirmation/{registrationId}', [PaymentController::class, 'confirmation'])->name('confirmation');
+    Route::post('/complete/{registrationId}', [PaymentController::class, 'complete'])->name('complete');
 });
