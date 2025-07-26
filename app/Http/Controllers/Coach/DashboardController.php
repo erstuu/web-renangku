@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\TrainingSession;
 use App\Models\CoachProfile;
 use App\Models\SessionRegistration;
+use App\Models\DataChangeRequest;
 
 class DashboardController extends Controller
 {
@@ -80,6 +81,18 @@ class DashboardController extends Controller
                 ->limit(5)
                 ->get();
 
+            // Get data change requests statistics
+            $dataChangeRequests = DataChangeRequest::where('user_id', $user->id)
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            $pendingDataRequests = $dataChangeRequests->where('reviewed_at', null)->count();
+            $approvedDataRequests = $dataChangeRequests->where('status', 'approved')->count();
+            $rejectedDataRequests = $dataChangeRequests->where('status', 'rejected')->count();
+
+            // Get recent data change requests (last 3)
+            $recentDataRequests = $dataChangeRequests->take(3);
+
             return view('coach.dashboard', compact(
                 'user',
                 'coachProfile',
@@ -88,11 +101,21 @@ class DashboardController extends Controller
                 'totalMembers',
                 'pendingRegistrations',
                 'monthlyEarnings',
-                'recentRegistrations'
+                'recentRegistrations',
+                'dataChangeRequests',
+                'pendingDataRequests',
+                'approvedDataRequests',
+                'rejectedDataRequests',
+                'recentDataRequests'
             ));
         }
 
-        // Jika status tidak dikenal atau ditolak
+        // Jika status ditolak secara eksplisit
+        if ($this->isRejected($user)) {
+            return view('coach.approval-rejected', compact('user'));
+        }
+
+        // Jika status tidak dikenal atau kasus lainnya
         return view('coach.approval-rejected', compact('user'));
     }
 
@@ -113,6 +136,11 @@ class DashboardController extends Controller
     private function isApproved($user)
     {
         return $user->approval_status === 'approved';
+    }
+
+    private function isRejected($user)
+    {
+        return $user->approval_status === 'rejected';
     }
 
     private function isProfileComplete($coachProfile)

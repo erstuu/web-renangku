@@ -248,12 +248,7 @@
                     </div>
 
                     <!-- Actions -->
-                    <div class="flex justify-between pt-6 border-t border-gray-200">
-                        <a href="{{ route('coach.data-change-requests.index') }}"
-                            class="bg-gray-500 text-white px-6 py-2 rounded-md hover:bg-gray-600 transition-colors">
-                            Kembali ke Daftar
-                        </a>
-
+                    <div class="flex justify-end pt-6 border-t border-gray-200">
                         @if($dataChangeRequest->status == 'pending')
                         <span class="text-yellow-600 font-medium">Menunggu review dari admin</span>
                         @elseif($dataChangeRequest->status == 'rejected')
