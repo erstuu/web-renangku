@@ -148,6 +148,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the data change requests made by the user.
+     */
+    public function dataChangeRequests()
+    {
+        return $this->hasMany(DataChangeRequest::class);
+    }
+
+    /**
      * Check if user is a coach with pending approval
      */
     public function isPendingApproval()

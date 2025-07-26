@@ -25,6 +25,13 @@ class RoleMiddleware
 
         $user = Auth::user();
 
+        // Check if user is active
+        if (!$user->is_active) {
+            Auth::logout(); // Logout inactive user
+            return redirect()->route('role.selector')
+                ->with('error', 'Akun Anda telah dinonaktifkan. Silakan hubungi administrator.');
+        }
+
         // Check if user's role is in the allowed roles
         if (!in_array($user->role, $roles)) {
             // Redirect based on user's actual role instead of showing 403

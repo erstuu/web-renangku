@@ -58,4 +58,12 @@ class TrainingSession extends Model
     {
         return $this->hasMany(SessionRegistration::class);
     }
+
+    /**
+     * Alias for sessionRegistrations - Get the registrations for this training session.
+     */
+    public function registrations()
+    {
+        return $this->hasMany(SessionRegistration::class);
+    }
 }

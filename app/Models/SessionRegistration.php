@@ -50,4 +50,13 @@ class SessionRegistration extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    /**
+     * Get the user that owns the registration.
+     * Alias for member() for easier access
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             AdminSeeder::class,
             CoachSeeder::class,
             MemberSeeder::class,
+            DataChangeRequestSeeder::class,
         ]);
     }
 }

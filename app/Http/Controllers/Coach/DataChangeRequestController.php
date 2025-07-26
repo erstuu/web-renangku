@@ -108,7 +108,7 @@ class DataChangeRequestController extends Controller
 
         // Set current and requested values based on what was filled
         if (!empty($validated['requested_name'])) {
-            $data['current_name'] = $user->name;
+            $data['current_name'] = $user->full_name;
             $data['requested_name'] = $validated['requested_name'];
         }
 
