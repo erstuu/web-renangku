@@ -9,6 +9,38 @@ use App\Models\User;
 
 class TrainingSessionController extends Controller
 {
+    public function edit($id)
+    {
+        $session = TrainingSession::findOrFail($id);
+        $coaches = User::where('role', 'coach')
+            ->where('approval_status', 'approved')
+            ->orderBy('full_name')
+            ->get();
+        return view('admin.training-sessions.edit', compact('session', 'coaches'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $session = TrainingSession::findOrFail($id);
+        $validated = $request->validate([
+            'session_name'   => 'required|string|max:255',
+            'session_type'   => 'required|in:group,private,competition',
+            'coach_id'       => 'required|exists:users,id',
+            'location'       => 'required|string|max:255',
+            'start_time'     => 'required|date',
+            'end_time'       => 'required|date|after_or_equal:start_time',
+            'max_capacity'   => 'required|integer|min:1',
+            'price'          => 'required|numeric|min:0',
+            'skill_level'    => 'required|in:all,beginner,intermediate,advanced',
+            'is_active'      => 'required|boolean',
+            'description'    => 'nullable|string',
+        ]);
+
+        $session->update($validated);
+
+        return redirect()->route('admin.training-sessions.show', $session->id)
+            ->with('success', 'Data sesi latihan berhasil diperbarui!');
+    }
     public function index(Request $request)
     {
         $query = TrainingSession::with(['coach']);
@@ -58,6 +90,12 @@ class TrainingSessionController extends Controller
         $todaySessions = TrainingSession::whereDate('start_time', today())->count();
         $upcomingSessions = TrainingSession::where('start_time', '>', now())->count();
 
+        // AJAX response for live search/filter
+        if ($request->ajax() || $request->wantsJson() || $request->input('ajax')) {
+            $html = view('admin.training-sessions._index_list', ['sessions' => $sessions])->render();
+            return response()->json(['html' => $html]);
+        }
+
         return view('admin.training-sessions.index', compact(
             'sessions',
             'coaches',
@@ -88,6 +126,37 @@ class TrainingSessionController extends Controller
             'paidRegistrations',
             'attendedCount'
         ));
+    }
+
+    public function create()
+    {
+        $coaches = User::where('role', 'coach')
+            ->where('approval_status', 'approved')
+            ->orderBy('full_name')
+            ->get();
+        return view('admin.training-sessions.create', compact('coaches'));
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'session_name'   => 'required|string|max:255',
+            'session_type'   => 'required|in:group,private,competition',
+            'coach_id'       => 'required|exists:users,id',
+            'location'       => 'required|string|max:255',
+            'start_time'     => 'required|date',
+            'end_time'       => 'required|date|after_or_equal:start_time',
+            'max_capacity'   => 'required|integer|min:1',
+            'price'          => 'required|numeric|min:0',
+            'skill_level'    => 'required|in:all,beginner,intermediate,advanced',
+            'is_active'      => 'required|boolean',
+            'description'    => 'nullable|string',
+        ]);
+
+        TrainingSession::create($validated);
+
+        return redirect()->route('admin.training-sessions.index')
+            ->with('success', 'Sesi latihan baru berhasil ditambahkan!');
     }
 
     public function toggleStatus($id)
