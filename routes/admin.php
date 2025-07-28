@@ -28,6 +28,8 @@ Route::prefix('coaches')->name('coaches.')->group(function () {
     Route::get('/pending', [CoachController::class, 'pending'])->name('pending');
     Route::get('/create', [CoachController::class, 'create'])->name('create');
     Route::post('/', [CoachController::class, 'store'])->name('store');
+    Route::get('/{id}/edit', [CoachController::class, 'edit'])->name('edit');
+    Route::put('/{id}/update', [CoachController::class, 'update'])->name('update');
     Route::get('/{id}', [CoachController::class, 'show'])->name('show');
     Route::post('/{id}/approve', [CoachController::class, 'approve'])->name('approve');
     Route::post('/{id}/reject', [CoachController::class, 'reject'])->name('reject');
@@ -38,7 +40,11 @@ Route::prefix('coaches')->name('coaches.')->group(function () {
 // Admin Member Management Routes
 Route::prefix('members')->name('members.')->group(function () {
     Route::get('/', [MemberController::class, 'index'])->name('index');
+    Route::get('/create', [MemberController::class, 'create'])->name('create');
+    Route::post('/', [MemberController::class, 'store'])->name('store');
+    Route::get('/{id}/edit', [MemberController::class, 'edit'])->name('edit');
     Route::get('/{id}', [MemberController::class, 'show'])->name('show');
+    Route::put('/{id}/update', [MemberController::class, 'update'])->name('update');
     Route::post('/{id}/update-membership', [MemberController::class, 'updateMembershipStatus'])->name('update-membership');
     Route::post('/{id}/toggle-status', [MemberController::class, 'toggleStatus'])->name('toggle-status');
     Route::delete('/{id}', [MemberController::class, 'destroy'])->name('destroy');
@@ -47,6 +53,10 @@ Route::prefix('members')->name('members.')->group(function () {
 // Admin Training Sessions Management
 Route::prefix('training-sessions')->name('training-sessions.')->group(function () {
     Route::get('/', [TrainingSessionController::class, 'index'])->name('index');
+    Route::get('/create', [TrainingSessionController::class, 'create'])->name('create');
+    Route::post('/', [TrainingSessionController::class, 'store'])->name('store');
+    Route::get('/{id}/edit', [TrainingSessionController::class, 'edit'])->name('edit');
+    Route::put('/{id}', [TrainingSessionController::class, 'update'])->name('update');
     Route::get('/{id}', [TrainingSessionController::class, 'show'])->name('show');
     Route::post('/{id}/toggle-status', [TrainingSessionController::class, 'toggleStatus'])->name('toggle-status');
     Route::delete('/{id}', [TrainingSessionController::class, 'destroy'])->name('destroy');
