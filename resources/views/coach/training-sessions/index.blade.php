@@ -50,12 +50,20 @@
                         <h2 class="text-2xl font-bold text-gray-800">Kelola Sesi Latihan</h2>
                         <p class="text-gray-600 mt-2">Buat dan kelola jadwal sesi latihan renang untuk member</p>
                     </div>
-                    <a href="{{ route('coach.training-sessions.create') }}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded inline-flex items-center">
-                        <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                        </svg>
-                        Buat Sesi Baru
-                    </a>
+                    <div class="flex gap-2">
+                        <a href="{{ route('coach.earnings.report') }}" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded inline-flex items-center">
+                            <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2a4 4 0 014-4h4m0 0V7m0 4h-4"></path>
+                            </svg>
+                            Cetak Laporan Pendapatan
+                        </a>
+                        <a href="{{ route('coach.training-sessions.create') }}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded inline-flex items-center">
+                            <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                            </svg>
+                            Buat Sesi Baru
+                        </a>
+                    </div>
                 </div>
             </div>
 

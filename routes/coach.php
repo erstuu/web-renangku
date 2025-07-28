@@ -6,6 +6,7 @@ use App\Http\Controllers\Coach\ProfileController;
 use App\Http\Controllers\Coach\TrainingSessionController;
 use App\Http\Controllers\Coach\RegistrationController;
 use App\Http\Controllers\Coach\DataChangeRequestController;
+use App\Http\Controllers\Coach\EarningsReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,4 +55,10 @@ Route::prefix('data-change-requests')->name('data-change-requests.')->group(func
     Route::get('/create', [DataChangeRequestController::class, 'create'])->name('create');
     Route::post('/', [DataChangeRequestController::class, 'store'])->name('store');
     Route::get('/{dataChangeRequest}', [DataChangeRequestController::class, 'show'])->name('show');
+});
+
+// Coach Earnings Report
+Route::prefix('earnings')->name('earnings.')->group(function () {
+Route::get('/report', [EarningsReportController::class, 'index'])->name('report');
+Route::get('/report/print', [EarningsReportController::class, 'print'])->name('report.print');
 });
