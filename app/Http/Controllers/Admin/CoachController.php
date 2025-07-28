@@ -228,6 +228,13 @@ class CoachController extends Controller
             ->with('success', $message);
     }
 
+
+    public function edit($id)
+    {
+        $coach = User::where('role', 'coach')->with('coachProfile')->findOrFail($id);
+        return view('admin.coaches.edit', compact('coach'));
+    }
+
     public function create()
     {
         return view('admin.coaches.create');
@@ -273,5 +280,51 @@ class CoachController extends Controller
 
         return redirect()->route('admin.coaches.index')
             ->with('success', "Coach {$user->full_name} berhasil ditambahkan!");
+    }
+    
+    public function update(Request $request, $id)
+    {
+        $coach = User::where('role', 'coach')->with('coachProfile')->findOrFail($id);
+
+        $request->validate([
+            'full_name' => 'required|string|max:255',
+            'username' => 'required|string|max:255|unique:users,username,' . $coach->id,
+            'email' => 'required|string|email|max:255|unique:users,email,' . $coach->id,
+            'password' => 'nullable|string|min:8|confirmed',
+            'specialization' => 'nullable|string|max:255',
+            'bio' => 'nullable|string',
+            'contact_info' => 'required|string|max:255',
+            'certification' => 'nullable|string',
+            'experience_years' => 'nullable|integer|min:0|max:50',
+            'hourly_rate' => 'nullable|numeric|min:0',
+        ]);
+
+        // Update user
+        $coach->full_name = $request->full_name;
+        $coach->username = $request->username;
+        $coach->email = $request->email;
+        if ($request->filled('password')) {
+            $coach->password = bcrypt($request->password);
+        }
+        $coach->save();
+
+        // Update coach profile
+        $profileData = [
+            'specialization' => $request->specialization,
+            'bio' => $request->bio,
+            'contact_info' => $request->contact_info,
+            'certification' => $request->certification,
+            'experience_years' => $request->experience_years,
+            'hourly_rate' => $request->hourly_rate,
+        ];
+        if ($coach->coachProfile) {
+            $coach->coachProfile->update($profileData);
+        } else {
+            $profileData['user_id'] = $coach->id;
+            CoachProfile::create($profileData);
+        }
+
+        return redirect()->route('admin.coaches.index')
+            ->with('success', "Coach {$coach->full_name} berhasil diperbarui!");
     }
 }

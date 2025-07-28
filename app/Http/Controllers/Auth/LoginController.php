@@ -162,7 +162,7 @@ class LoginController extends Controller
             }
 
             return redirect()->route('member.dashboard')
-                ->with('success', 'Selamat datang kembali, Member!');
+                ->with('success', 'Selamat datang kembali, ' . $user->full_name . '!');
         }
 
         return back()->withErrors([

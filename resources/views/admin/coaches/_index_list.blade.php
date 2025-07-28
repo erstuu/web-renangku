@@ -73,6 +73,25 @@
 
                 <!-- Action Buttons -->
                 <div class="flex flex-col gap-2 ml-4">
+                    <a href="{{ route('admin.coaches.show', $coach->id) }}"
+                        class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-md text-sm font-medium text-center transition-colors">
+                        <i class="fas fa-eye mr-1"></i>Detail
+                    </a>
+                    <form method="POST" action="{{ route('admin.coaches.toggle-status', $coach->id) }}" onsubmit="return confirm('Yakin ingin mengubah status aktif/nonaktif coach ini?')">
+                        @csrf
+                        <button type="submit"
+                            class="{{ $coach->is_active ? 'bg-gray-500 hover:bg-gray-600' : 'bg-green-600 hover:bg-green-700' }} text-white px-3 py-2 rounded-md text-sm font-medium text-center transition-colors w-full min-w-[120px]">
+                            <i class="fas {{ $coach->is_active ? 'fa-pause' : 'fa-play' }} mr-1"></i>
+                            {{ $coach->is_active ? 'Non-aktifkan' : 'Aktifkan' }}
+                        </button>
+                    </form>
+                    <form method="POST" action="{{ route('admin.coaches.destroy', $coach->id) }}" onsubmit="return confirm('Hapus coach ini?')">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-md text-sm font-medium text-center transition-colors w-full min-w-[120px]">
+                            <i class="fas fa-trash mr-1"></i>Hapus
+                        </button>
+                    </form>
                     @if($coach->approval_status === 'pending')
                     <div class="flex gap-2">
                         <form method="POST" action="{{ route('admin.coaches.approve', $coach->id) }}" class="inline">
@@ -83,7 +102,6 @@
                                 <i class="fas fa-check mr-1"></i>Approve
                             </button>
                         </form>
-
                         <form method="POST" action="{{ route('admin.coaches.reject', $coach->id) }}" class="inline">
                             @csrf
                             <button type="submit"
@@ -94,22 +112,6 @@
                         </form>
                     </div>
                     @endif
-
-                    @if($coach->approval_status === 'approved')
-                    <form method="POST" action="{{ route('admin.coaches.toggle-status', $coach->id) }}" class="inline">
-                        @csrf
-                        <button type="submit"
-                            class="bg-{{ $coach->is_active ? 'orange' : 'green' }}-500 hover:bg-{{ $coach->is_active ? 'orange' : 'green' }}-600 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors w-full">
-                            <i class="fas fa-{{ $coach->is_active ? 'pause' : 'play' }} mr-1"></i>
-                            {{ $coach->is_active ? 'Non-aktifkan' : 'Aktifkan' }}
-                        </button>
-                    </form>
-                    @endif
-
-                    <a href="{{ route('admin.coaches.show', $coach->id) }}"
-                        class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-md text-sm font-medium text-center transition-colors">
-                        <i class="fas fa-eye mr-1"></i>Detail
-                    </a>
                 </div>
             </div>
         </div>

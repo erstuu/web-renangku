@@ -77,23 +77,4 @@ class DashboardController extends Controller
             'recentAnnouncements'
         ));
     }
-
-    private function needsProfileCompletion($user)
-    {
-        if ($user->role === 'member') {
-            $memberProfile = MemberProfile::where('user_id', $user->id)->first();
-            return !$memberProfile || !$this->isProfileComplete($memberProfile);
-        }
-        return false;
-    }
-
-    private function isProfileComplete($memberProfile)
-    {
-        if (!$memberProfile) return false;
-
-        return !empty($memberProfile->phone) &&
-            !empty($memberProfile->emergency_contact_name) &&
-            !empty($memberProfile->swimming_experience) &&
-            !is_null($memberProfile->date_of_birth);
-    }
 }
