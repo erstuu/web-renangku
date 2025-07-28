@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Pengumuman - Admin Web Renangku</title>
+    <title>Edit Pengumuman - Admin Web Renangku</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="{{ asset('js/notifications.js') }}"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -62,36 +62,37 @@
             </div>
             @endif
             <div class="flex items-center gap-4 mb-6">
-                <a href="{{ route('admin.announcements.index') }}" class="text-gray-500 hover:text-gray-700">
+                <a href="{{ route('admin.announcements.show', $announcement->id) }}" class="text-gray-500 hover:text-gray-700">
                     <i class="fas fa-arrow-left text-xl"></i>
                 </a>
                 <div>
-                    <h2 class="text-3xl font-bold text-gray-800">Tambah Pengumuman</h2>
-                    <p class="text-gray-600 mt-1">Isi data pengumuman baru di bawah ini</p>
+                    <h2 class="text-3xl font-bold text-gray-800">Edit Pengumuman</h2>
+                    <p class="text-gray-600 mt-1">Ubah data pengumuman berikut sesuai kebutuhan</p>
                 </div>
             </div>
             <div class="bg-white rounded-lg shadow border border-gray-200">
-                <form action="{{ route('admin.announcements.store') }}" method="POST" class="p-6 space-y-6">
+                <form action="{{ route('admin.announcements.update', $announcement->id) }}" method="POST" class="p-6 space-y-6">
                     @csrf
+                    @method('PUT')
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="md:col-span-2">
                             <label for="title" class="block text-sm font-medium text-gray-700 mb-2">Judul Pengumuman <span class="text-red-500">*</span></label>
-                            <input type="text" id="title" name="title" value="{{ old('title') }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors @error('title') border-red-500 @enderror" required>
+                            <input type="text" id="title" name="title" value="{{ old('title', $announcement->title) }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors @error('title') border-red-500 @enderror" required>
                             @error('title')<p class="text-red-500 text-sm mt-1">{{ $message }}</p>@enderror
                         </div>
                         <div class="md:col-span-2">
                             <label for="content" class="block text-sm font-medium text-gray-700 mb-2">Isi Pengumuman <span class="text-red-500">*</span></label>
-                            <textarea id="content" name="content" rows="6" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors @error('content') border-red-500 @enderror" required>{{ old('content') }}</textarea>
+                            <textarea id="content" name="content" rows="6" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors @error('content') border-red-500 @enderror" required>{{ old('content', $announcement->content) }}</textarea>
                             @error('content')<p class="text-red-500 text-sm mt-1">{{ $message }}</p>@enderror
                         </div>
                         <div class="md:col-span-2 flex items-center gap-4">
-                            <input type="checkbox" id="is_published" name="is_published" value="1" class="h-5 w-5 text-red-600 border-gray-300 rounded focus:ring-red-500" {{ old('is_published', true) ? 'checked' : '' }}>
+                            <input type="checkbox" id="is_published" name="is_published" value="1" class="h-5 w-5 text-red-600 border-gray-300 rounded focus:ring-red-500" {{ old('is_published', $announcement->is_published) ? 'checked' : '' }}>
                             <label for="is_published" class="text-sm font-medium text-gray-700">Publikasikan sekarang</label>
                         </div>
                     </div>
                     <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200">
-                        <a href="{{ route('admin.announcements.index') }}" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200">Batal</a>
-                        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200">Simpan Pengumuman</button>
+                        <a href="{{ route('admin.announcements.show', $announcement->id) }}" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200">Batal</a>
+                        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200">Simpan Perubahan</button>
                     </div>
                 </form>
             </div>

@@ -59,12 +59,13 @@ class AnnouncementController extends Controller
             'is_published' => 'boolean',
         ]);
 
+        $isPublished = $request->boolean('is_published', false);
         $announcement = Announcement::create([
             'admin_id' => Auth::id(),
             'title' => $request->title,
             'content' => $request->content,
-            'is_published' => $request->boolean('is_published', false),
-            'published_at' => $request->boolean('is_published', false) ? now() : null,
+            'is_published' => $isPublished,
+            'published_at' => now(),
         ]);
 
         $message = $announcement->is_published
